@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile      # FastAPI backend
+    container_name: AutoInsight-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.GUI  # Streamlit frontend
+    container_name: AutoInsight-frontend
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - VIN_API_URL=http://AutoInsight-backend:8000/vin-summary  # use container name as hostname
+    depends_on:
+      - backend
+    restart: unless-stopped
